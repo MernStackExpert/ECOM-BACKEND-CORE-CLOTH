@@ -11,7 +11,7 @@ const bannerRoutes = require("./routes/banner.route");
 const sectionRoutes = require("./routes/section.route");
 const analyticsRoutes = require("./routes/analytics.route");
 const faqRoutes = require("./routes/faq.route");
-
+const testimonialRoutes = require("./routes/testimonial.route");
 // ------------------------------------------- //
 
 const app = express();
@@ -48,6 +48,9 @@ app.use("/api/analytics", analyticsRoutes);
 
 // faqa
 app.use("/api/faqs", faqRoutes);
+
+// testimonials
+app.use("/api/testimonials", testimonialRoutes);
 
 
 // --------------------------------------------- //
