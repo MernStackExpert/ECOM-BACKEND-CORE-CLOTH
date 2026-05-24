@@ -28,16 +28,15 @@ const createProduct = async (req, res) => {
     });
 
     if (existingProduct) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Product with this SKU or Slug already exists",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Product with this SKU or Slug already exists",
+      });
     }
 
     productData.createdAt = new Date();
     productData.updatedAt = new Date();
+    productData.totalSold = 0;
 
     if (!productData.metadata) {
       productData.metadata = {};
@@ -46,6 +45,14 @@ const createProduct = async (req, res) => {
       id: req.user.id,
       role: req.user.role,
     };
+
+    // if (!productData.metadata) {
+    //   productData.metadata = {};
+    // }
+    // productData.metadata.addedBy = {
+    //   id: req.user?.id || "",
+    //   role: req.user?.role || "admin",
+    // };
 
     const result = await productsCollection.insertOne(productData);
 
@@ -181,13 +188,11 @@ const updateProduct = async (req, res) => {
         .json({ success: false, message: "Product not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Product updated successfully",
-        product: result,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      product: result,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

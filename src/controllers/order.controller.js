@@ -16,7 +16,12 @@ const createOrder = async (req, res) => {
           _id: new ObjectId(item.productId),
           "inventory.stock": { $gte: item.quantity },
         },
-        update: { $inc: { "inventory.stock": -item.quantity } },
+        update: {
+          $inc: {
+            "inventory.stock": -item.quantity,
+            totalSold: item.quantity,
+          },
+        },
       },
     }));
 

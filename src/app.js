@@ -10,6 +10,7 @@ const couponRoutes = require("./routes/coupon.route");
 const bannerRoutes = require("./routes/banner.route");
 const sectionRoutes = require("./routes/section.route");
 const analyticsRoutes = require("./routes/analytics.route");
+const faqRoutes = require("./routes/faq.route");
 
 // ------------------------------------------- //
 
@@ -45,6 +46,9 @@ app.use("/api/sections", sectionRoutes);
 // analytics 
 app.use("/api/analytics", analyticsRoutes);
 
+// faqa
+app.use("/api/faqs", faqRoutes);
+
 
 // --------------------------------------------- //
 
@@ -52,15 +56,15 @@ app.use("/api/analytics", analyticsRoutes);
 app.get("/", (req, res) => {
   res
     .status(200)
-    .json({ success: true, message: "E-commerce API is running smoothly." });
+    .json({ success: true, message: "ALHAMDULILLAH E-commerce API is running smoothly." });
 });
 
 app.use((req, res, next) => {
-  res.status(404).json({ success: false, message: "Route not found" });
+  res.status(404).json({ success: false, message: "INNAHLILLAH Route not found" });
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ success: false, message: "Internal Server Error" });
+  res.status(500).json({ success: false, message: "INNAHLILLAH Internal Server Error" });
 });
 
 module.exports = app;
