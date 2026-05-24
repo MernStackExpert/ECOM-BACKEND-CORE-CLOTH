@@ -47,13 +47,11 @@ const updateSettings = async (req, res) => {
       { upsert: true, returnDocument: "after" },
     );
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Settings updated successfully",
-        settings: result,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Settings updated successfully",
+      settings: result,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
