@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/auth.route");
-const productRoutes = require("./routes/product.route")
+const productRoutes = require("./routes/product.route");
+const orderRoutes = require("./routes/order.route");
 
 const app = express();
 
@@ -9,11 +10,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // api endpoint
 
+// auth
 app.use("/api/auth", authRoutes);
+
+// prodcuts
 app.use("/api/products", productRoutes);
+
+// orders
+app.use("/api/orders", orderRoutes);
 
 app.get("/", (req, res) => {
   res
