@@ -5,6 +5,7 @@ const productRoutes = require("./routes/product.route");
 const orderRoutes = require("./routes/order.route");
 const settingRoutes = require("./routes/setting.route");
 const couponRoutes = require("./routes/coupon.route");
+const bannerRoutes = require("./routes/banner.route");
 
 const app = express();
 
@@ -12,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// api endpoint
+// ----------> api endpoint <---------------
 
 // auth
 app.use("/api/auth", authRoutes);
@@ -28,6 +29,9 @@ app.use("/api/settings", settingRoutes);
 
 // copuon
 app.use("/api/coupons", couponRoutes);
+
+// banner
+app.use("/api/banners", bannerRoutes);
 
 app.get("/", (req, res) => {
   res
