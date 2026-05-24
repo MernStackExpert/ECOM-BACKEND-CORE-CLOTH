@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+
+// ------------------------------------------- //
 const authRoutes = require("./routes/auth.route");
 const productRoutes = require("./routes/product.route");
 const orderRoutes = require("./routes/order.route");
@@ -7,6 +9,9 @@ const settingRoutes = require("./routes/setting.route");
 const couponRoutes = require("./routes/coupon.route");
 const bannerRoutes = require("./routes/banner.route");
 const sectionRoutes = require("./routes/section.route");
+const analyticsRoutes = require("./routes/analytics.route");
+
+// ------------------------------------------- //
 
 const app = express();
 
@@ -36,6 +41,9 @@ app.use("/api/banners", bannerRoutes);
 
 // section 
 app.use("/api/sections", sectionRoutes);
+
+// analytics 
+app.use("/api/analytics", analyticsRoutes);
 
 
 // --------------------------------------------- //
