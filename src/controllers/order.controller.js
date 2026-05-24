@@ -140,13 +140,32 @@ const updateOrderStatus = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Order updated successfully",
-        order: result,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Order updated successfully",
+      order: result,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const getOrderById = async (req, res) => {
+  try {
+    const db = getDB();
+    const ordersCollection = db.collection("orders");
+
+    const order = await ordersCollection.findOne({
+      _id: new ObjectId(req.params.id),
+    });
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    res.status(200).json({ success: true, order });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -157,4 +176,5 @@ module.exports = {
   getMyOrders,
   getAllOrders,
   updateOrderStatus,
+  getOrderById,
 };
