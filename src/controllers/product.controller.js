@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { getDB } = require("../config/db");
+const { sendFacebookEvent } = require("../utils/facebookTracking");
 
 const generateSlug = (text) => {
   return text
@@ -45,14 +46,6 @@ const createProduct = async (req, res) => {
       id: req.user.id,
       role: req.user.role,
     };
-
-    // if (!productData.metadata) {
-    //   productData.metadata = {};
-    // }
-    // productData.metadata.addedBy = {
-    //   id: req.user?.id || "",
-    //   role: req.user?.role || "admin",
-    // };
 
     const result = await productsCollection.insertOne(productData);
 
@@ -147,16 +140,24 @@ const getProductBySlug = async (req, res) => {
     const db = getDB();
     const productsCollection = db.collection("products");
 
-    const product = await productsCollection.findOne({
-      slug: req.params.slug,
-      "status.isActive": true,
-    });
+    const product = await productsCollection.findOne({ slug: req.params.slug });
 
     if (!product) {
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
     }
+
+    sendFacebookEvent(
+      "ViewContent",
+      {},
+      {
+        value: product.pricing.price,
+        contentName: product.name,
+        contentIds: [product._id.toString()],
+      },
+      { ip: req.ip, userAgent: req.headers["user-agent"] },
+    ).catch((err) => console.error(err));
 
     res.status(200).json({ success: true, product });
   } catch (error) {

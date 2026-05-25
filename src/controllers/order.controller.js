@@ -59,16 +59,11 @@ const createOrder = async (req, res) => {
       "Purchase",
       { phoneNumber: userInfo.phoneNumber, name: userInfo.name },
       {
-        totalAmount: pricing.totalAmount,
+        value: pricing.totalAmount,
         orderId: result.insertedId.toString(),
       },
+      { ip: req.ip, userAgent: req.headers["user-agent"] },
     ).catch((err) => console.error(err));
-
-    res.status(201).json({
-      success: true,
-      message: "Order placed successfully",
-      orderId: result.insertedId,
-    });
 
     res.status(201).json({
       success: true,

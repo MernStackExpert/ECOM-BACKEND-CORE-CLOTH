@@ -8,7 +8,12 @@ const hashData = (data) => {
     .digest("hex");
 };
 
-const sendFacebookEvent = async (eventName, userData, customData) => {
+const sendFacebookEvent = async (
+  eventName,
+  userData = {},
+  customData = {},
+  reqData = {},
+) => {
   try {
     const pixelId = process.env.FB_PIXEL_ID;
     const accessToken = process.env.FB_ACCESS_TOKEN;
@@ -35,11 +40,15 @@ const sendFacebookEvent = async (eventName, userData, customData) => {
           user_data: {
             ph: hashedPhone ? [hashedPhone] : [],
             fn: hashedName ? [hashedName] : [],
+            client_ip_address: reqData.ip || null,
+            client_user_agent: reqData.userAgent || null,
           },
           custom_data: {
             currency: "BDT",
-            value: customData.totalAmount,
-            order_id: customData.orderId,
+            value: customData.value || 0,
+            order_id: customData.orderId || null,
+            content_name: customData.contentName || null,
+            content_ids: customData.contentIds || [],
           },
         },
       ],
