@@ -6,6 +6,7 @@ const getDashboardAnalytics = async (req, res) => {
     const ordersCollection = db.collection("orders");
     const usersCollection = db.collection("users");
     const productsCollection = db.collection("products");
+    const categoriesCollection = db.collection("categories");
     const couponsCollection = db.collection("coupons");
     const bannersCollection = db.collection("banners");
     const sectionsCollection = db.collection("sections");
@@ -19,7 +20,8 @@ const getDashboardAnalytics = async (req, res) => {
     startOfToday.setHours(0, 0, 0, 0);
 
     const [
-      totalCustomers,
+      customerStatsResult,
+      categoryStatsResult,
       totalProducts,
       totalActiveCoupons,
       totalActiveBanners,
@@ -38,7 +40,37 @@ const getDashboardAnalytics = async (req, res) => {
       discountResult,
       ratingResult,
     ] = await Promise.all([
-      usersCollection.countDocuments({ role: "customer" }),
+      usersCollection
+        .aggregate([
+          { $match: { role: "customer" } },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: 1 },
+              active: {
+                $sum: { $cond: [{ $ne: ["$isActive", false] }, 1, 0] },
+              },
+              inactive: {
+                $sum: { $cond: [{ $eq: ["$isActive", false] }, 1, 0] },
+              },
+            },
+          },
+        ])
+        .toArray(),
+
+      categoriesCollection
+        .aggregate([
+          {
+            $group: {
+              _id: null,
+              total: { $sum: 1 },
+              active: { $sum: { $cond: ["$isActive", 1, 0] } },
+              trending: { $sum: { $cond: ["$isTrending", 1, 0] } },
+              top: { $sum: { $cond: ["$isTop", 1, 0] } },
+            },
+          },
+        ])
+        .toArray(),
 
       productsCollection.countDocuments({ "status.isActive": true }),
 
@@ -207,6 +239,22 @@ const getDashboardAnalytics = async (req, res) => {
       totalOrders += status.count;
     });
 
+    const totalCustomers =
+      customerStatsResult.length > 0 ? customerStatsResult[0].total : 0;
+    const totalActiveCustomers =
+      customerStatsResult.length > 0 ? customerStatsResult[0].active : 0;
+    const totalInactiveCustomers =
+      customerStatsResult.length > 0 ? customerStatsResult[0].inactive : 0;
+
+    const totalCategories =
+      categoryStatsResult.length > 0 ? categoryStatsResult[0].total : 0;
+    const totalActiveCategories =
+      categoryStatsResult.length > 0 ? categoryStatsResult[0].active : 0;
+    const totalTrendingCategories =
+      categoryStatsResult.length > 0 ? categoryStatsResult[0].trending : 0;
+    const totalTopCategories =
+      categoryStatsResult.length > 0 ? categoryStatsResult[0].top : 0;
+
     const totalRevenue =
       revenueResult.length > 0 ? revenueResult[0].totalRevenue : 0;
     const totalInventory =
@@ -235,8 +283,15 @@ const getDashboardAnalytics = async (req, res) => {
           todaysRevenue,
           totalOrders,
           todaysOrders,
+          totalPendingOrders: orderStatusBreakdown.Pending,
           averageOrderValue,
           totalCustomers,
+          totalActiveCustomers,
+          totalInactiveCustomers,
+          totalCategories,
+          totalActiveCategories,
+          totalTrendingCategories,
+          totalTopCategories,
           totalProducts,
           totalInventory,
           outOfStockCount,
