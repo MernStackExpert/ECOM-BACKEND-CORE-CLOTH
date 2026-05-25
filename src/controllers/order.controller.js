@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { getDB } = require("../config/db");
+const { sendFacebookEvent } = require("../utils/facebookTracking");
 
 const createOrder = async (req, res) => {
   try {
@@ -53,6 +54,21 @@ const createOrder = async (req, res) => {
     };
 
     const result = await ordersCollection.insertOne(newOrder);
+
+    sendFacebookEvent(
+      "Purchase",
+      { phoneNumber: userInfo.phoneNumber, name: userInfo.name },
+      {
+        totalAmount: pricing.totalAmount,
+        orderId: result.insertedId.toString(),
+      },
+    ).catch((err) => console.error(err));
+
+    res.status(201).json({
+      success: true,
+      message: "Order placed successfully",
+      orderId: result.insertedId,
+    });
 
     res.status(201).json({
       success: true,
