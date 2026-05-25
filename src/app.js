@@ -12,6 +12,7 @@ const sectionRoutes = require("./routes/section.route");
 const analyticsRoutes = require("./routes/analytics.route");
 const faqRoutes = require("./routes/faq.route");
 const testimonialRoutes = require("./routes/testimonial.route");
+const categoryRoutes = require("./routes/category.route");
 // ------------------------------------------- //
 
 const app = express();
@@ -40,10 +41,10 @@ app.use("/api/coupons", couponRoutes);
 // banner
 app.use("/api/banners", bannerRoutes);
 
-// section 
+// section
 app.use("/api/sections", sectionRoutes);
 
-// analytics 
+// analytics
 app.use("/api/analytics", analyticsRoutes);
 
 // faqa
@@ -52,22 +53,30 @@ app.use("/api/faqs", faqRoutes);
 // testimonials
 app.use("/api/testimonials", testimonialRoutes);
 
+// category
+app.use("/api/categories", categoryRoutes);
 
 // --------------------------------------------- //
-
 
 app.get("/", (req, res) => {
   res
     .status(200)
-    .json({ success: true, message: "ALHAMDULILLAH E-commerce API is running smoothly." });
+    .json({
+      success: true,
+      message: "ALHAMDULILLAH E-commerce API is running smoothly.",
+    });
 });
 
 app.use((req, res, next) => {
-  res.status(404).json({ success: false, message: "INNAHLILLAH Route not found" });
+  res
+    .status(404)
+    .json({ success: false, message: "INNAHLILLAH Route not found" });
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ success: false, message: "INNAHLILLAH Internal Server Error" });
+  res
+    .status(500)
+    .json({ success: false, message: "INNAHLILLAH Internal Server Error" });
 });
 
 module.exports = app;
