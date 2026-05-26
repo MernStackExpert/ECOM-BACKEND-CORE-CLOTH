@@ -10,6 +10,7 @@ const createSection = async (req, res) => {
       title: req.body.title,
       serial: req.body.serial || 0,
       productLimit: req.body.productLimit || 8,
+      layout: req.body.layout || "grid", // 'slider' অথবা 'grid'
       isActive: req.body.isActive !== undefined ? req.body.isActive : true,
       filters: req.body.filters || {},
       createdAt: new Date(),
