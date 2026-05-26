@@ -10,7 +10,7 @@ const createSection = async (req, res) => {
       title: req.body.title,
       serial: req.body.serial || 0,
       productLimit: req.body.productLimit || 8,
-      layout: req.body.layout || "grid", // 'slider' অথবা 'grid'
+      layout: req.body.layout || "grid", // 'slider' or 'grid'
       isActive: req.body.isActive !== undefined ? req.body.isActive : true,
       filters: req.body.filters || {},
       createdAt: new Date(),
@@ -65,13 +65,11 @@ const updateSection = async (req, res) => {
         .json({ success: false, message: "Section not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Section updated successfully",
-        section: result,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Section updated successfully",
+      section: result,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -136,6 +134,9 @@ const getHomepageData = async (req, res) => {
           _id: section._id,
           title: section.title,
           serial: section.serial,
+          layout: section.layout,
+          productLimit: section.productLimit,
+          
           products,
         };
       }),
