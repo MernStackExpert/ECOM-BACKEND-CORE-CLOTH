@@ -79,9 +79,16 @@ const getMyOrders = async (req, res) => {
   try {
     const db = getDB();
     const ordersCollection = db.collection("orders");
+    const usersCollection = db.collection("users"); // ইউজার কালেকশন ইমপোর্ট করলাম
+
+    const user = await usersCollection.findOne({ _id: new ObjectId(req.user.id) });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
     const orders = await ordersCollection
-      .find({ userId: new ObjectId(req.user.id) })
+      .find({ "userInfo.phoneNumber": user.phoneNumber })
       .sort({ createdAt: -1 })
       .toArray();
 

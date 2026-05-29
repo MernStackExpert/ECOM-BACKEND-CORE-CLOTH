@@ -65,7 +65,7 @@ const getAllProducts = async (req, res) => {
     const productsCollection = db.collection("products");
 
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 16; 
     const skip = (page - 1) * limit;
 
     const query = { "status.isActive": true };
@@ -73,15 +73,19 @@ const getAllProducts = async (req, res) => {
     if (req.query.search) {
       query.name = { $regex: req.query.search, $options: "i" };
     }
+    
     if (req.query.category) {
-      query["category.main"] = req.query.category;
+      query["category.main"] = { $regex: new RegExp(`^${req.query.category}$`, "i") };
     }
+    
     if (req.query.subCategory) {
       query["category.sub"] = req.query.subCategory;
     }
+    
     if (req.query.brand) {
       query.brand = req.query.brand;
     }
+    
     if (req.query.minPrice || req.query.maxPrice) {
       query["pricing.price"] = {};
       if (req.query.minPrice)
@@ -92,8 +96,13 @@ const getAllProducts = async (req, res) => {
 
     const sortOption = {};
     if (req.query.sortBy) {
-      const order = req.query.sortOrder === "desc" ? -1 : 1;
-      sortOption[req.query.sortBy] = order;
+      if (req.query.sortBy === "price_asc") sortOption["pricing.price"] = 1;
+      else if (req.query.sortBy === "price_desc") sortOption["pricing.price"] = -1;
+      else if (req.query.sortBy === "totalSold") sortOption.totalSold = -1;
+      else {
+        const order = req.query.sortOrder === "desc" ? -1 : 1;
+        sortOption[req.query.sortBy] = order;
+      }
     } else {
       sortOption.createdAt = -1;
     }
@@ -104,6 +113,7 @@ const getAllProducts = async (req, res) => {
       "pricing.price": 1,
       "pricing.oldPrice": 1,
       "media.thumbnail": 1,
+      "category.main": 1,
       brand: 1,
       status: 1,
       "social.rating": 1,

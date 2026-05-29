@@ -11,7 +11,7 @@ const getSettings = async (req, res) => {
       settings = {
         branding: { siteName: "", logo: "", favicon: "" },
         contact: { phone: "", email: "", address: "" },
-        socialMedia: { facebook: "", instagram: "", youtube: "", whatsapp: "" },
+        socialMedia: { facebook: "", instagram: "", youtube: "", whatsapp: "" , tiktok:""},
         trackingAndSeo: {
           facebookPixelId: "",
           googleAnalyticsId: "",
@@ -22,6 +22,11 @@ const getSettings = async (req, res) => {
           deliveryChargeInside: 0,
           deliveryChargeOutside: 0,
           returnPolicyText: "",
+        },
+        deleveryDiscount: {
+          isActive: true,
+          minOrder: 0,
+          message:"",
         },
         isWebsiteOff: false,
       };
