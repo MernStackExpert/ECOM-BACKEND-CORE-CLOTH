@@ -233,6 +233,38 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const updateUserRoleStatus = async (req, res) => {
+  try {
+    const { role, isActive } = req.body;
+    const db = getDB();
+    const usersCollection = db.collection("users");
+
+    const updateData = { updatedAt: new Date() };
+    if (role) updateData.role = role;
+    if (isActive !== undefined) updateData.isActive = isActive;
+
+    const result = await usersCollection.findOneAndUpdate(
+      { _id: new ObjectId(req.params.id) },
+      { $set: updateData },
+      { returnDocument: "after", projection: { password: 0 } },
+    );
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User privileges updated successfully",
+      user: result,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -242,4 +274,5 @@ module.exports = {
   getAllUsers,
   getUserById,
   deleteUser,
+  updateUserRoleStatus
 };
