@@ -194,10 +194,34 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const deleteOrder = async (req, res) => {
+  try {
+    const db = getDB();
+    const ordersCollection = db.collection("orders");
+
+    const result = await ordersCollection.deleteOne({
+      _id: new ObjectId(req.params.id),
+    });
+
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Order permanently deleted" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createOrder,
   getMyOrders,
   getAllOrders,
   updateOrderStatus,
   getOrderById,
+  deleteOrder,
 };
